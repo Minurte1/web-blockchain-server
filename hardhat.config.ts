@@ -1,5 +1,10 @@
 import "@nomicfoundation/hardhat-toolbox";
+import "dotenv/config";
 import { HardhatUserConfig } from "hardhat/config";
+
+const deployerAccounts = process.env.BLOCKCHAIN_PRIVATE_KEY
+  ? [process.env.BLOCKCHAIN_PRIVATE_KEY]
+  : [];
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -13,6 +18,13 @@ const config: HardhatUserConfig = {
     tests: "./test",
     cache: "./cache",
     artifacts: "./artifacts",
+  },
+  networks: {
+    ganache: {
+      url: process.env.BLOCKCHAIN_RPC_URL ?? "http://127.0.0.1:7545",
+      chainId: Number(process.env.BLOCKCHAIN_CHAIN_ID ?? 1337),
+      ...(deployerAccounts.length ? { accounts: deployerAccounts } : {}),
+    },
   },
 };
 

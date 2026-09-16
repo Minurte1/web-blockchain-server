@@ -1,7 +1,9 @@
 # FLOW 07 — PUBLIC VERIFY END-TO-END
 
 ## React
-Route: `/verify/:certificateCode`
+Routes:
+- `/verify` — nhập mã văn bằng để tra cứu công khai
+- `/verify/:certificateCode` — hiển thị kết quả xác minh
 
 States:
 - LOADING
@@ -31,7 +33,20 @@ Ghi `verification_logs`.
 
 ## QR
 QR của Certificate phải trỏ tới:
-`{CLIENT_URL}/verify/{certificateCode}`
+`{CLIENT_URL}/verify/{certificateCode}?source=qr`
+
+QR payload do API đã phân quyền tạo:
+
+```http
+GET /api/admin/certificates/:id/verification-qr
+GET /api/student/certificates/:id/verification-qr
+```
+
+Route `/verify/:certificateCode?source=qr` truyền `method=QR` tới public verify API để lưu đúng nguồn xác minh.
+Khi người dùng tự nhập mã, frontend gửi `method=CODE`.
+
+Quy ước hash, nội dung QR, điều kiện an toàn và trạng thái xác minh được mô tả tại
+`../11_QR_HASH_CERTIFICATE_VERIFICATION.md`.
 
 ## Tests
 - valid

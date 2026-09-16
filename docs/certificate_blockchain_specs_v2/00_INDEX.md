@@ -33,6 +33,7 @@ React UI
 6. `06_VERIFY_RETRY_REVOKE.md`
 7. `07_TESTING_AND_ACCEPTANCE.md`
 8. `09_AI_END_TO_END_FLOW_PROTOCOL.md`
+9. `11_QR_HASH_CERTIFICATE_VERIFICATION.md` — cơ chế định danh hash và quét QR xác minh văn bằng
 
 Các file trên là **reference/spec tổng thể**.
 

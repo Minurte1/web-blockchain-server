@@ -5,8 +5,8 @@
 1. Copy `.env.example` to `.env`. Set `MONGODB_URI` to the Mongo server URI and `MONGO_DB_NAME` to the database name.
 2. Start MongoDB with `docker compose up -d`.
 3. Install dependencies with `npm install`.
-4. In a separate terminal, run `npm run contract:node`.
-5. Run `npm run contract:deploy:local` and put the printed address in `CERTIFICATE_CONTRACT_ADDRESS`.
+4. Start Ganache with its RPC server at `http://127.0.0.1:7545`.
+5. Set `BLOCKCHAIN_RPC_URL=http://127.0.0.1:7545` and the matching `BLOCKCHAIN_CHAIN_ID` in `.env`, then run `npm run contract:deploy:local` and put the printed address in `CERTIFICATE_CONTRACT_ADDRESS`.
 6. Run `npm run dev` (Nodemon tự khởi động lại backend khi file trong `src` thay đổi).
 7. For a local admin and institution, run `npm run seed` (admin: `admin@example.com` / `Admin@123`; change it outside local development).
 

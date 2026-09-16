@@ -5,3 +5,6 @@ cache/
 coverage/
 typechain-types/
 .env
+.env.production
+runtime.out.log
+runtime.err.log

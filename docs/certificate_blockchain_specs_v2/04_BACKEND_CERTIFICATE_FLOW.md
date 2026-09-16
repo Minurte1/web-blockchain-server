@@ -14,7 +14,6 @@ Role:
 ```json
 {
   "studentId": "...",
-  "certificateCode": "TVU-2026-000001",
   "certificateName": "Kỹ sư Công nghệ thông tin",
   "major": "Công nghệ thông tin",
   "classification": "Khá",
@@ -36,7 +35,8 @@ Check student
 ↓
 Check institution
 ↓
-Check duplicate certificateCode
+Generate certificateCode automatically:
+`{INSTITUTION_CODE}-{ISSUE_YEAR}-{SEQUENCE}`
 ↓
 Create Certificate
 status=PENDING

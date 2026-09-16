@@ -30,4 +30,12 @@ describe("CertificateRegistry", function () {
     expect(await registry.verifyCertificate(certificateCode, documentHash)).to.equal(false);
     expect((await registry.getCertificate(certificateCode)).revoked).to.equal(true);
   });
+
+  it("allows the owner to authorize a second school issuer", async function () {
+    const [, schoolIssuer] = await ethers.getSigners();
+    const registry = await ethers.deployContract("CertificateRegistry");
+    await registry.setIssuerAuthorization(schoolIssuer.address, true);
+    await registry.connect(schoolIssuer).issueCertificate(certificateCode, documentHash);
+    expect((await registry.getCertificate(certificateCode)).issuer).to.equal(schoolIssuer.address);
+  });
 });

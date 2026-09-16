@@ -7,6 +7,7 @@ Admin tạo và quản lý thông tin sinh viên để làm dữ liệu đầu v
 - `/admin/students`
 - `/admin/students/create`
 - `/admin/students/:id`
+- `/admin/students/:id/edit`
 
 Features:
 - list
@@ -14,7 +15,7 @@ Features:
 - pagination
 - create
 - view detail
-- edit nếu repo/scope hỗ trợ
+- edit thông tin hồ sơ sinh viên
 
 ## Backend
 - GET `/api/admin/students`
@@ -37,3 +38,4 @@ Sau khi create thành công, React chuyển detail/list và hiển thị data tr
 - validation
 - search/pagination
 - non-admin forbidden
+- edit success và validation

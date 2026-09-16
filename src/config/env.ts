@@ -25,6 +25,7 @@ const environmentSchema = z
     BLOCKCHAIN_PRIVATE_KEY: optionalEnvironmentValue(
       z.string().regex(/^0x[a-fA-F0-9]{64}$/),
     ),
+    BLOCKCHAIN_ISSUER_PRIVATE_KEYS: z.string().optional(),
     JWT_SECRET: z
       .string()
       .min(32)

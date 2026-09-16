@@ -5,6 +5,10 @@ export interface ApiSuccess<T> {
   data: T;
 }
 
-export function sendSuccess<T>(response: Response, data: T, status = 200): Response<ApiSuccess<T>> {
+export function sendSuccess<T>(
+  response: Response,
+  data: T,
+  status = 200,
+): Response<ApiSuccess<T>> {
   return response.status(status).json({ success: true, data });
 }

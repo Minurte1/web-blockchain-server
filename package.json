@@ -13,7 +13,7 @@
     "test:contract": "hardhat test",
     "contract:compile": "hardhat compile",
     "contract:node": "hardhat node",
-    "contract:deploy:local": "hardhat run scripts/deploy.ts --network localhost"
+    "contract:deploy:local": "hardhat run scripts/deploy.ts --network ganache"
   },
   "dependencies": {
     "@types/swagger-ui-express": "^4.1.8",

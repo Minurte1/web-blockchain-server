@@ -1,0 +1,3 @@
+import { AppError } from "../../http/error";
+import { InstitutionRepository } from "./institution.repository";
+export class InstitutionService { constructor(private readonly repository = new InstitutionRepository()) {} async create(input: { name: string; code: string; address?: string; blockchainIssuerAddress?: string }) { if (await this.repository.findByCode(input.code)) throw new AppError("Institution code already exists", 409, "INSTITUTION_CODE_EXISTS"); return this.repository.create(input); } async getRequired(id: string) { const item = await this.repository.findById(id); if (!item) throw new AppError("Institution not found", 404, "INSTITUTION_NOT_FOUND"); return item; } list() { return this.repository.list(); } }

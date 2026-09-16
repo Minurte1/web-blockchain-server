@@ -4,7 +4,10 @@ import swaggerUi from "swagger-ui-express";
 import type { AppEnvironment } from "./config/env";
 import { errorHandler } from "./http/error";
 import { sendSuccess } from "./http/response";
-import { responseEncryption, requestDecryption } from "./middlewares/encryption.middleware";
+import {
+  responseEncryption,
+  requestDecryption,
+} from "./middlewares/encryption.middleware";
 import { openApiAdminDocument, openApiClientDocument } from "./docs/openapi";
 import { authRouter } from "./modules/auth/auth.router";
 import { studentRouter } from "./modules/students/student.router";
@@ -16,22 +19,50 @@ import { studentCertificateRouter } from "./modules/certificates/student-certifi
 
 export function createApp(environment: AppEnvironment) {
   const app = express();
-  app.use(cors({ origin: environment.CLIENT_URL }));
+  app.use(cors());
   app.use(express.json());
   app.use(responseEncryption(environment));
   app.use(requestDecryption(environment));
-  app.get("/api/health", (_request, response) => sendSuccess(response, { status: "ok", service: "certificate-blockchain-api" }));
-  app.get("/api/openapi.admin.json", (_request, response) => response.json(openApiAdminDocument));
-  app.get("/api/openapi.client.json", (_request, response) => response.json(openApiClientDocument));
-  app.get("/api/openapi.json", (_request, response) => response.json(openApiAdminDocument));
-  app.use("/api/docs/admin", swaggerUi.serveFiles(openApiAdminDocument), swaggerUi.setup(openApiAdminDocument, { swaggerOptions: { persistAuthorization: true } }));
-  app.use("/api/docs/client", swaggerUi.serveFiles(openApiClientDocument), swaggerUi.setup(openApiClientDocument, { swaggerOptions: { persistAuthorization: true } }));
-  app.get("/api/docs", (_request, response) => response.redirect("/api/docs/admin"));
+  app.get("/api/health", (_request, response) =>
+    sendSuccess(response, {
+      status: "ok",
+      service: "certificate-blockchain-api",
+    }),
+  );
+  app.get("/api/openapi.admin.json", (_request, response) =>
+    response.json(openApiAdminDocument),
+  );
+  app.get("/api/openapi.client.json", (_request, response) =>
+    response.json(openApiClientDocument),
+  );
+  app.get("/api/openapi.json", (_request, response) =>
+    response.json(openApiAdminDocument),
+  );
+  app.use(
+    "/api/docs/admin",
+    swaggerUi.serveFiles(openApiAdminDocument),
+    swaggerUi.setup(openApiAdminDocument, {
+      swaggerOptions: { persistAuthorization: true },
+    }),
+  );
+  app.use(
+    "/api/docs/client",
+    swaggerUi.serveFiles(openApiClientDocument),
+    swaggerUi.setup(openApiClientDocument, {
+      swaggerOptions: { persistAuthorization: true },
+    }),
+  );
+  app.get("/api/docs", (_request, response) =>
+    response.redirect("/api/docs/admin"),
+  );
   app.use("/api/auth", authRouter(environment));
   app.use("/api/admin/students", studentRouter(environment));
   app.use("/api/admin/institutions", institutionRouter(environment));
   app.use("/api/admin/certificates", certificateRouter(environment));
-  app.use("/api/admin/blockchain-transactions", blockchainTransactionRouter(environment));
+  app.use(
+    "/api/admin/blockchain-transactions",
+    blockchainTransactionRouter(environment),
+  );
   app.use("/api/student/certificates", studentCertificateRouter(environment));
   app.use("/api/public", verificationRouter(environment));
   app.use(errorHandler);

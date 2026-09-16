@@ -6,6 +6,7 @@ test("loads safe local defaults", () => {
   const environment = loadEnvironment({});
   assert.equal(environment.PORT, 5001);
   assert.equal(environment.BLOCKCHAIN_CHAIN_ID, 31337);
+  assert.equal(environment.MONGO_DB_NAME, "certificate-blockchain");
 });
 
 test("rejects an invalid contract address", () => {

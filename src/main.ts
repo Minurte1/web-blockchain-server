@@ -6,7 +6,11 @@ async function bootstrap() {
   const environment = loadEnvironment();
   await connectToDatabase(environment);
   const app = createApp(environment);
-  app.listen(environment.PORT, () => console.log(`API listening at http://localhost:${environment.PORT} (Swagger: /api/docs)`));
+  app.listen(environment.PORT, () =>
+    console.log(
+      `API listening at http://localhost:${environment.PORT} (Swagger: /api/docs)`,
+    ),
+  );
 }
 
 bootstrap().catch((error: unknown) => {

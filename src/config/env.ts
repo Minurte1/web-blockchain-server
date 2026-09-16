@@ -14,10 +14,8 @@ const environmentSchema = z
       .enum(["development", "test", "production"])
       .default("development"),
     PORT: z.coerce.number().int().positive().default(5001),
-    MONGODB_URI: z
-      .string()
-      .url()
-      .default("mongodb://127.0.0.1:27017/certificate-blockchain"),
+    MONGODB_URI: z.string().url().default("mongodb://127.0.0.1:27017"),
+    MONGO_DB_NAME: z.string().trim().min(1).default("certificate-blockchain"),
     CLIENT_URL: z.string().url().default("http://localhost:3001"),
     BLOCKCHAIN_RPC_URL: z.string().url().default("http://127.0.0.1:8545"),
     BLOCKCHAIN_CHAIN_ID: z.coerce.number().int().positive().default(31337),

@@ -2,7 +2,7 @@
 
 ## Local setup
 
-1. Copy `.env.example` to `.env`.
+1. Copy `.env.example` to `.env`. Set `MONGODB_URI` to the Mongo server URI and `MONGO_DB_NAME` to the database name.
 2. Start MongoDB with `docker compose up -d`.
 3. Install dependencies with `npm install`.
 4. In a separate terminal, run `npm run contract:node`.

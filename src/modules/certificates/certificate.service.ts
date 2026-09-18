@@ -199,6 +199,12 @@ export class CertificateService {
   async findByCode(code: string) {
     return this.repository.findByCode(code);
   }
+  async findByVerificationIdentifier(identifier: string) {
+    return (
+      (await this.repository.findByCode(identifier)) ??
+      this.repository.findByBlockchainIdentifier(identifier)
+    );
+  }
   async list(query: {
     keyword?: string;
     status?: string;

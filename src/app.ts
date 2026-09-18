@@ -16,6 +16,9 @@ import { certificateRouter } from "./modules/certificates/certificate.router";
 import { verificationRouter } from "./modules/verification/verification.router";
 import { blockchainTransactionRouter } from "./modules/blockchain/blockchain-transaction.router";
 import { studentCertificateRouter } from "./modules/certificates/student-certificate.router";
+import { consultationRouter } from "./modules/consultations/consultation.router";
+import { academicRouter } from "./modules/academics/academic.router";
+import { statisticsRouter } from "./modules/statistics/statistics.router";
 
 export function createApp(environment: AppEnvironment) {
   const app = express();
@@ -58,12 +61,16 @@ export function createApp(environment: AppEnvironment) {
   app.use("/api/auth", authRouter(environment));
   app.use("/api/admin/students", studentRouter(environment));
   app.use("/api/admin/institutions", institutionRouter(environment));
+  app.use("/api/admin/academics", academicRouter(environment));
+  app.use("/api/admin/statistics", statisticsRouter(environment));
   app.use("/api/admin/certificates", certificateRouter(environment));
   app.use(
     "/api/admin/blockchain-transactions",
     blockchainTransactionRouter(environment),
   );
   app.use("/api/student/certificates", studentCertificateRouter(environment));
+  app.use("/api/consultations", consultationRouter(environment));
+  app.use("/api/admin/consultations", consultationRouter(environment));
   app.use("/api/public", verificationRouter(environment));
   app.use(errorHandler);
   return app;

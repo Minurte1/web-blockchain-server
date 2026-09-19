@@ -79,6 +79,7 @@ Express 5 API (TypeScript)
 | `institutions` | tên, mã duy nhất, địa chỉ, địa chỉ ví issuer Blockchain và thông tin ủy quyền issuer. |
 | `majors`, `courses`, `trainingclasses` | danh mục đào tạo, liên kết với cơ sở đào tạo. |
 | `certificates` | mã văn bằng, sinh viên, cơ sở, thông tin bằng, `documentHash`, trạng thái nghiệp vụ/Blockchain, hash giao dịch cấp và thu hồi, lỗi/retry/timestamps. |
+| `certificate_sequences` | bộ đếm tăng nguyên tử theo `institutionCode` và năm cấp; dùng tạo mã văn bằng duy nhất theo mẫu `INSTITUTION-YYYY-000001`. |
 | `blockchain_transactions` | mỗi attempt cấp hoặc thu hồi: action, network, chainId, contract, tx hash, block, trạng thái và lỗi. |
 | `verification_logs` | mã/bằng liên quan, phương thức `QR/CODE/HASH`, kết quả, IP, user-agent, thời gian. |
 | `consultations` | yêu cầu tư vấn từ người dùng đăng nhập và trạng thái xử lý. |
@@ -275,7 +276,34 @@ web-blockchain-client/
 - Bổ sung test tích hợp/E2E, CI/CD, HTTPS, quản lý secret và sao lưu/phục hồi dữ liệu.
 - Bổ sung đa tổ chức theo mô hình issuer được ủy quyền và quy trình quản trị khóa an toàn.
 
-## 15. Khung viết báo cáo Word đề xuất cho AI
+## 15. Các hạng mục đã bổ sung và trạng thái triển khai
+
+Phần này là nhật ký phạm vi để AI/báo cáo nhận biết các chức năng được bổ sung sau các luồng cấp, xác minh, retry và thu hồi cốt lõi. Các hạng mục dưới đây đều đã có mã nguồn ở cả API hoặc giao diện tương ứng; không phải chỉ là đề xuất.
+
+| Hạng mục bổ sung | Hiện thực đang có | Ý nghĩa trong báo cáo |
+| --- | --- | --- |
+| Danh mục đào tạo | ADMIN quản lý ngành (`majors`), khóa (`courses`) và lớp (`trainingclasses`) qua các API create/list/update; hồ sơ sinh viên liên kết bằng các khóa tham chiếu, đồng thời lưu các trường hiển thị `major`, `course`, `className`. | Làm rõ dữ liệu đầu vào của văn bằng và cách chuẩn hóa thông tin đào tạo. |
+| Quản lý cơ sở đào tạo và issuer | Mỗi cơ sở có mã duy nhất, địa chỉ ví issuer, thời điểm/hash giao dịch ủy quyền. Khi thay đổi địa chỉ ví, thông tin ủy quyền trước đó bị xóa để tránh hiểu nhầm là còn hiệu lực. Contract owner dùng `setIssuerAuthorization` để cấp/rút quyền. | Minh họa mô hình nhiều đơn vị cấp bằng và sự tách biệt giữa dữ liệu quản trị off-chain với quyền ghi on-chain. |
+| Sinh mã văn bằng tuần tự | `CertificateCodeService` tạo mã theo mẫu `INSTITUTION-YYYY-000001`, dùng collection `certificate_sequences` và thao tác tăng nguyên tử; có xử lý lại một lần khi va chạm unique index lúc khởi tạo. | Nêu được cơ chế định danh ổn định, tránh trùng mã khi cấp đồng thời. |
+| Dashboard thống kê | Endpoint `GET /api/admin/statistics/overview` tổng hợp số lượng sinh viên/cơ sở/danh mục/văn bằng, phân bố trạng thái văn bằng/giao dịch/tư vấn, xu hướng sáu tháng, phân bố theo cơ sở/ngành và sáu giao dịch gần nhất. | Là chức năng hỗ trợ quản trị; các số liệu là dữ liệu tổng hợp thời điểm truy vấn, không phải chỉ số hiệu năng của hệ thống. |
+| Tiếp nhận tư vấn | Người dùng đã đăng nhập tạo yêu cầu tư vấn; ADMIN xem danh sách có phân trang/lọc trạng thái và chuyển `NEW` → `CONTACTED` → `CLOSED`. Yêu cầu lưu người tạo, email, điện thoại, tổ chức, nội dung và thời gian. | Bổ sung quy trình hỗ trợ người dùng, tách biệt với nghiệp vụ xác minh công khai. |
+| Tài liệu vận hành API | Swagger được tách thành tài liệu Admin và Client; `/api/docs` chuyển tới Admin, còn các OpenAPI JSON là `/api/openapi.admin.json` và `/api/openapi.client.json`. | Có thể dùng làm phụ lục API hoặc căn cứ đối chiếu khi viết phần cài đặt. |
+
+### Cập nhật mô hình dữ liệu
+
+- Có thêm collection `certificate_sequences` để sinh số thứ tự theo `institutionCode` và năm cấp.
+- `students` liên kết tới `institutions`, `majors`, `courses`, `trainingclasses`; các trường tên hiển thị vẫn được giữ để phục vụ nghiệp vụ và dữ liệu đã có.
+- `institutions` có `blockchainIssuerAddress`, `issuerAuthorizedAt`, `issuerAuthorizationTransactionHash` để theo dõi quá trình cấp quyền issuer.
+- `consultations` có trạng thái xử lý `NEW`, `CONTACTED`, `CLOSED`; đây là dữ liệu nghiệp vụ hỗ trợ, không được đưa lên Blockchain.
+
+### Lưu ý chính xác khi mô tả API
+
+- Toàn bộ đường dẫn trong bảng API ở mục 10 là đường dẫn đầy đủ theo prefix đã nêu. Ví dụ cập nhật cơ sở là `PATCH /api/admin/institutions/:id`, không phải `PATCH /:id` độc lập.
+- `POST /api/consultations` yêu cầu JWT của người dùng đã đăng nhập; `GET/PATCH /api/admin/consultations` chỉ dành cho ADMIN.
+- Các endpoint danh mục đào tạo và thống kê đều yêu cầu JWT cùng vai trò ADMIN.
+- API công khai xác minh vẫn không cần JWT; tham số `method` dùng để ghi nhận nguồn xác minh như `QR`, `CODE` hoặc `HASH`.
+
+## 16. Khung viết báo cáo Word đề xuất cho AI
 
 AI nên dùng cấu trúc sau, viết theo văn phong học thuật tiếng Việt và chỉ dựa trên các phần đã triển khai ở trên:
 
